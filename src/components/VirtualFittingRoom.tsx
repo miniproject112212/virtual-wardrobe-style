@@ -21,7 +21,7 @@ export const VirtualFittingRoom: React.FC<VirtualFittingRoomProps> = ({
   const [zoomLevel, setZoomLevel] = useState(100);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [selectedSize, setSelectedSize] = useState('M');
-  const [selectedColor, setSelectedColor] = useState(selectedOutfit?.color || 'white');
+  const [selectedColor, setSelectedColor] = useState(selectedOutfit?.colors?.[0] || 'white');
 
   const handleRotate = () => {
     setRotationAngle(prev => (prev + 90) % 360);
@@ -138,16 +138,35 @@ export const VirtualFittingRoom: React.FC<VirtualFittingRoomProps> = ({
                       className="w-80 h-96 object-cover rounded-lg shadow-2xl"
                     />
                     
-                    {/* Clothing Overlay Effect */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent rounded-lg"></div>
-                    
-                    {/* Clothing Item Visualization */}
-                    <div className="absolute top-16 left-1/2 transform -translate-x-1/2 w-64 h-32 bg-gradient-to-b from-blue-200 to-blue-400 opacity-70 rounded-lg border-2 border-blue-300 shadow-lg">
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="text-white font-semibold text-lg bg-black/30 px-3 py-1 rounded">
-                          {selectedOutfit.name}
-                        </span>
+                    {/* Improved Clothing Overlay */}
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      {/* Clothing Item positioned better */}
+                      <div className="absolute top-20 left-1/2 transform -translate-x-1/2 w-56 h-40 rounded-lg overflow-hidden shadow-lg">
+                        <img
+                          src={selectedOutfit.image}
+                          alt={selectedOutfit.name}
+                          className="w-full h-full object-cover opacity-85 mix-blend-multiply"
+                          style={{
+                            filter: selectedColor !== 'white' ? `hue-rotate(${
+                              selectedColor === 'black' ? '0deg' :
+                              selectedColor === 'blue' ? '220deg' :
+                              selectedColor === 'navy' ? '240deg' :
+                              selectedColor === 'red' ? '0deg' :
+                              selectedColor === 'gray' ? '0deg' :
+                              selectedColor === 'pink' ? '320deg' :
+                              '0deg'
+                            })` : 'none'
+                          }}
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/10"></div>
                       </div>
+                    </div>
+                    
+                    {/* Size indicator */}
+                    <div className="absolute top-4 left-4">
+                      <Badge className="bg-white/90 text-gray-800 border">
+                        Size: {selectedSize}
+                      </Badge>
                     </div>
                   </div>
                 </div>
@@ -180,7 +199,7 @@ export const VirtualFittingRoom: React.FC<VirtualFittingRoomProps> = ({
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-2xl font-bold text-gray-900">${selectedOutfit.price}</span>
+                <span className="text-2xl font-bold text-gray-900">₹{selectedOutfit.price}</span>
                 <Badge variant="secondary" className="capitalize">
                   {selectedOutfit.category}
                 </Badge>
@@ -225,6 +244,7 @@ export const VirtualFittingRoom: React.FC<VirtualFittingRoomProps> = ({
                         color === 'red' ? 'bg-red-500' :
                         color === 'green' ? 'bg-green-500' :
                         color === 'pink' ? 'bg-pink-500' :
+                        color === 'light blue' ? 'bg-blue-300' :
                         'bg-gray-300'
                       }`}
                     />
@@ -280,7 +300,7 @@ export const VirtualFittingRoom: React.FC<VirtualFittingRoomProps> = ({
             </Button>
             <Button className="col-span-2 gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700">
               <ShoppingCart className="w-4 h-4" />
-              Add to Cart - ${selectedOutfit.price}
+              Add to Cart - ₹{selectedOutfit.price}
             </Button>
           </div>
         </div>
