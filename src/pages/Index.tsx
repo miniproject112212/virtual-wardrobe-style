@@ -1,33 +1,32 @@
 
 import React, { useState } from 'react';
-import { Camera, User, Shirt, Heart, Share2, ShoppingBag, Filter, Grid, List } from 'lucide-react';
+import { Palette, Shirt, RotateCcw, Heart, ShoppingBag, Share2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { UploadSection } from '@/components/UploadSection';
-import { ClothingCollection } from '@/components/ClothingCollection';
-import { VirtualFittingRoom } from '@/components/VirtualFittingRoom';
+import { DesignUploader } from '@/components/Design/DesignUploader';
+import { ShirtCollection3D } from '@/components/3D/ShirtCollection3D';
+import { ShirtCustomizer } from '@/components/Customization/ShirtCustomizer';
 import { FavoriteOutfits } from '@/components/FavoriteOutfits';
 import { UserProfile } from '@/components/UserProfile';
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState('upload');
-  const [userPhoto, setUserPhoto] = useState<string | null>(null);
-  const [selectedOutfit, setSelectedOutfit] = useState<any>(null);
-  const [favoriteOutfits, setFavoriteOutfits] = useState<any[]>([]);
+  const [userDesign, setUserDesign] = useState<string | null>(null);
+  const [selectedShirt, setSelectedShirt] = useState<any>(null);
+  const [savedDesigns, setSavedDesigns] = useState<any[]>([]);
 
-  const handlePhotoUpload = (photo: string) => {
-    setUserPhoto(photo);
-    setActiveTab('wardrobe');
+  const handleDesignUpload = (design: string) => {
+    setUserDesign(design);
+    setActiveTab('shirts');
   };
 
-  const handleOutfitSelect = (outfit: any) => {
-    setSelectedOutfit(outfit);
-    setActiveTab('fitting');
+  const handleShirtSelect = (shirt: any) => {
+    setSelectedShirt(shirt);
+    setActiveTab('customize');
   };
 
-  const handleSaveFavorite = (outfit: any) => {
-    setFavoriteOutfits(prev => [...prev, { ...outfit, id: Date.now() }]);
+  const handleSaveDesign = (design: any) => {
+    setSavedDesigns(prev => [...prev, { ...design, id: Date.now() }]);
   };
 
   return (
@@ -42,9 +41,9 @@ const Index = () => {
               </div>
               <div>
                 <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                  VirtualWear
+                  3D Shirt Designer
                 </h1>
-                <p className="text-sm text-gray-600">Your Digital Wardrobe</p>
+                <p className="text-sm text-gray-600">Custom Design Studio</p>
               </div>
             </div>
             <div className="flex items-center gap-4">
@@ -66,48 +65,48 @@ const Index = () => {
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-5 mb-8 bg-white/60 backdrop-blur-sm">
             <TabsTrigger value="upload" className="gap-2">
-              <Camera className="w-4 h-4" />
-              Upload
+              <Palette className="w-4 h-4" />
+              Design
             </TabsTrigger>
-            <TabsTrigger value="wardrobe" className="gap-2">
+            <TabsTrigger value="shirts" className="gap-2">
               <Shirt className="w-4 h-4" />
-              Wardrobe
+              Shirts
             </TabsTrigger>
-            <TabsTrigger value="fitting" className="gap-2">
-              <User className="w-4 h-4" />
-              Fitting Room
+            <TabsTrigger value="customize" className="gap-2">
+              <RotateCcw className="w-4 h-4" />
+              Customize
             </TabsTrigger>
             <TabsTrigger value="favorites" className="gap-2">
               <Heart className="w-4 h-4" />
-              Favorites
+              Saved
             </TabsTrigger>
             <TabsTrigger value="profile" className="gap-2">
-              <User className="w-4 h-4" />
+              <Shirt className="w-4 h-4" />
               Profile
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="upload" className="space-y-6">
-            <UploadSection onPhotoUpload={handlePhotoUpload} />
+            <DesignUploader onDesignUpload={handleDesignUpload} />
           </TabsContent>
 
-          <TabsContent value="wardrobe" className="space-y-6">
-            <ClothingCollection 
-              onOutfitSelect={handleOutfitSelect}
-              userPhoto={userPhoto}
+          <TabsContent value="shirts" className="space-y-6">
+            <ShirtCollection3D 
+              onShirtSelect={handleShirtSelect}
+              userDesign={userDesign || undefined}
             />
           </TabsContent>
 
-          <TabsContent value="fitting" className="space-y-6">
-            <VirtualFittingRoom 
-              userPhoto={userPhoto}
-              selectedOutfit={selectedOutfit}
-              onSaveFavorite={handleSaveFavorite}
+          <TabsContent value="customize" className="space-y-6">
+            <ShirtCustomizer 
+              selectedShirt={selectedShirt}
+              userDesign={userDesign}
+              onSaveDesign={handleSaveDesign}
             />
           </TabsContent>
 
           <TabsContent value="favorites" className="space-y-6">
-            <FavoriteOutfits favorites={favoriteOutfits} />
+            <FavoriteOutfits favorites={savedDesigns} />
           </TabsContent>
 
           <TabsContent value="profile" className="space-y-6">
@@ -120,8 +119,8 @@ const Index = () => {
       <footer className="bg-white/80 backdrop-blur-sm border-t border-gray-200 mt-16">
         <div className="container mx-auto px-4 py-8">
           <div className="text-center text-gray-600">
-            <p className="mb-2">VirtualWear - Revolutionizing Digital Fashion</p>
-            <p className="text-sm">Your privacy is protected. Photos are processed securely and never shared.</p>
+            <p className="mb-2">3D Shirt Designer - Create Your Perfect Custom Apparel</p>
+            <p className="text-sm">Upload your designs and see them come to life in stunning 3D</p>
           </div>
         </div>
       </footer>
