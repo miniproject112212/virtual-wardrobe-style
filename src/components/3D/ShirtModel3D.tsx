@@ -1,7 +1,7 @@
 
 import React, { useRef, useEffect, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Group, Mesh } from 'three';
+import { Group } from 'three';
 import * as THREE from 'three';
 
 interface DesignPlacement {
@@ -36,20 +36,24 @@ export const ShirtModel3D: React.FC<ShirtModel3DProps> = ({
   const [frontTexture, setFrontTexture] = useState<THREE.Texture | null>(null);
   const [backTexture, setBackTexture] = useState<THREE.Texture | null>(null);
 
-  // Load textures when designs change
+  // Load front texture
   useEffect(() => {
-    console.log('Loading front design:', frontDesign);
-    if (frontDesign) {
+    console.log('Front design value:', frontDesign);
+    console.log('Front design type:', typeof frontDesign);
+    
+    if (frontDesign && typeof frontDesign === 'string' && frontDesign.trim() !== '') {
+      console.log('Loading front texture from:', frontDesign);
       const loader = new THREE.TextureLoader();
+      
       loader.load(
         frontDesign,
         (texture) => {
           console.log('Front texture loaded successfully');
-          // Ensure proper texture settings
           texture.wrapS = THREE.ClampToEdgeWrapping;
           texture.wrapT = THREE.ClampToEdgeWrapping;
           texture.minFilter = THREE.LinearFilter;
           texture.magFilter = THREE.LinearFilter;
+          texture.flipY = false;
           setFrontTexture(texture);
         },
         (progress) => {
@@ -57,26 +61,33 @@ export const ShirtModel3D: React.FC<ShirtModel3DProps> = ({
         },
         (error) => {
           console.error('Error loading front texture:', error);
+          setFrontTexture(null);
         }
       );
     } else {
+      console.log('No valid front design provided, clearing texture');
       setFrontTexture(null);
     }
   }, [frontDesign]);
 
+  // Load back texture
   useEffect(() => {
-    console.log('Loading back design:', backDesign);
-    if (backDesign) {
+    console.log('Back design value:', backDesign);
+    console.log('Back design type:', typeof backDesign);
+    
+    if (backDesign && typeof backDesign === 'string' && backDesign.trim() !== '') {
+      console.log('Loading back texture from:', backDesign);
       const loader = new THREE.TextureLoader();
+      
       loader.load(
         backDesign,
         (texture) => {
           console.log('Back texture loaded successfully');
-          // Ensure proper texture settings
           texture.wrapS = THREE.ClampToEdgeWrapping;
           texture.wrapT = THREE.ClampToEdgeWrapping;
           texture.minFilter = THREE.LinearFilter;
           texture.magFilter = THREE.LinearFilter;
+          texture.flipY = false;
           setBackTexture(texture);
         },
         (progress) => {
@@ -84,9 +95,11 @@ export const ShirtModel3D: React.FC<ShirtModel3DProps> = ({
         },
         (error) => {
           console.error('Error loading back texture:', error);
+          setBackTexture(null);
         }
       );
     } else {
+      console.log('No valid back design provided, clearing texture');
       setBackTexture(null);
     }
   }, [backDesign]);
@@ -136,7 +149,13 @@ export const ShirtModel3D: React.FC<ShirtModel3DProps> = ({
     }
   }, [showBack]);
 
-  console.log('Rendering ShirtModel3D - frontTexture:', !!frontTexture, 'backTexture:', !!backTexture, 'showBack:', showBack);
+  console.log('Rendering ShirtModel3D:', {
+    frontTexture: !!frontTexture,
+    backTexture: !!backTexture,
+    showBack,
+    frontDesign: frontDesign ? 'has design' : 'no design',
+    backDesign: backDesign ? 'has design' : 'no design'
+  });
 
   return (
     <group ref={shirtRef} position={[0, 0, 0]}>
@@ -153,17 +172,18 @@ export const ShirtModel3D: React.FC<ShirtModel3DProps> = ({
       {/* Front design */}
       {frontTexture && !showBack && (
         <mesh 
-          position={[frontPlacement.x, frontPlacement.y, 0.07]}
+          position={[frontPlacement.x, frontPlacement.y, 0.08]}
           rotation={[0, 0, frontPlacement.rotation]}
-          scale={[frontPlacement.scale * 0.6, frontPlacement.scale * 0.6, 1]}
+          scale={[frontPlacement.scale * 0.8, frontPlacement.scale * 0.8, 1]}
         >
           <planeGeometry args={[1, 1]} />
           <meshStandardMaterial 
             transparent 
-            opacity={0.95}
+            opacity={1}
             map={frontTexture}
             alphaTest={0.1}
             side={THREE.DoubleSide}
+            depthWrite={false}
           />
         </mesh>
       )}
@@ -171,17 +191,18 @@ export const ShirtModel3D: React.FC<ShirtModel3DProps> = ({
       {/* Back design */}
       {backTexture && showBack && (
         <mesh 
-          position={[backPlacement.x, backPlacement.y, -0.07]}
+          position={[backPlacement.x, backPlacement.y, -0.08]}
           rotation={[0, Math.PI, backPlacement.rotation]}
-          scale={[backPlacement.scale * 0.6, backPlacement.scale * 0.6, 1]}
+          scale={[backPlacement.scale * 0.8, backPlacement.scale * 0.8, 1]}
         >
           <planeGeometry args={[1, 1]} />
           <meshStandardMaterial 
             transparent 
-            opacity={0.95}
+            opacity={1}
             map={backTexture}
             alphaTest={0.1}
             side={THREE.DoubleSide}
+            depthWrite={false}
           />
         </mesh>
       )}
