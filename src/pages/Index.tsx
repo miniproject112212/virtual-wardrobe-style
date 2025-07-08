@@ -10,15 +10,9 @@ import { FavoriteOutfits } from '@/components/FavoriteOutfits';
 import { UserProfile } from '@/components/UserProfile';
 
 const Index = () => {
-  const [activeTab, setActiveTab] = useState('upload');
-  const [userDesign, setUserDesign] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState('shirts');
   const [selectedShirt, setSelectedShirt] = useState<any>(null);
   const [savedDesigns, setSavedDesigns] = useState<any[]>([]);
-
-  const handleDesignUpload = (design: string) => {
-    setUserDesign(design);
-    setActiveTab('shirts');
-  };
 
   const handleShirtSelect = (shirt: any) => {
     setSelectedShirt(shirt);
@@ -41,9 +35,9 @@ const Index = () => {
               </div>
               <div>
                 <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                  3D Shirt Designer
+                  Custom Shirt Designer
                 </h1>
-                <p className="text-sm text-gray-600">Custom Design Studio</p>
+                <p className="text-sm text-gray-600">Professional 3D Design Studio</p>
               </div>
             </div>
             <div className="flex items-center gap-4">
@@ -53,7 +47,7 @@ const Index = () => {
               </Button>
               <Button size="sm" className="gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700">
                 <ShoppingBag className="w-4 h-4" />
-                Shop
+                Get Quote
               </Button>
             </div>
           </div>
@@ -63,22 +57,18 @@ const Index = () => {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-5 mb-8 bg-white/60 backdrop-blur-sm">
-            <TabsTrigger value="upload" className="gap-2">
-              <Palette className="w-4 h-4" />
-              Design
-            </TabsTrigger>
+          <TabsList className="grid w-full grid-cols-4 mb-8 bg-white/60 backdrop-blur-sm">
             <TabsTrigger value="shirts" className="gap-2">
               <Shirt className="w-4 h-4" />
-              Shirts
+              Select Shirt
             </TabsTrigger>
             <TabsTrigger value="customize" className="gap-2">
-              <RotateCcw className="w-4 h-4" />
-              Customize
+              <Palette className="w-4 h-4" />
+              Design & Customize
             </TabsTrigger>
             <TabsTrigger value="favorites" className="gap-2">
               <Heart className="w-4 h-4" />
-              Saved
+              Saved Designs
             </TabsTrigger>
             <TabsTrigger value="profile" className="gap-2">
               <Shirt className="w-4 h-4" />
@@ -86,21 +76,13 @@ const Index = () => {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="upload" className="space-y-6">
-            <DesignUploader onDesignUpload={handleDesignUpload} />
-          </TabsContent>
-
           <TabsContent value="shirts" className="space-y-6">
-            <ShirtCollection3D 
-              onShirtSelect={handleShirtSelect}
-              userDesign={userDesign || undefined}
-            />
+            <ShirtCollection3D onShirtSelect={handleShirtSelect} />
           </TabsContent>
 
           <TabsContent value="customize" className="space-y-6">
             <ShirtCustomizer 
               selectedShirt={selectedShirt}
-              userDesign={userDesign}
               onSaveDesign={handleSaveDesign}
             />
           </TabsContent>
@@ -119,8 +101,8 @@ const Index = () => {
       <footer className="bg-white/80 backdrop-blur-sm border-t border-gray-200 mt-16">
         <div className="container mx-auto px-4 py-8">
           <div className="text-center text-gray-600">
-            <p className="mb-2">3D Shirt Designer - Create Your Perfect Custom Apparel</p>
-            <p className="text-sm">Upload your designs and see them come to life in stunning 3D</p>
+            <p className="mb-2">Custom Shirt Designer - Professional 3D Design Platform</p>
+            <p className="text-sm">Upload your designs and see them come to life on realistic 3D shirt models</p>
           </div>
         </div>
       </footer>
