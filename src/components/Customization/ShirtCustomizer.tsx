@@ -62,11 +62,14 @@ export const ShirtCustomizer: React.FC<ShirtCustomizerProps> = ({
   }
 
   const handleDesignUpload = (design: string, type: 'front' | 'back') => {
-    console.log('Design uploaded:', type, design);
+    console.log('Design uploaded in ShirtCustomizer:', type, design ? 'Design URL available' : 'No design URL');
+    console.log('Design URL length:', design?.length);
     if (type === 'front') {
       setFrontDesign(design);
+      console.log('Front design set:', design);
     } else {
       setBackDesign(design);
+      console.log('Back design set:', design);
     }
   };
 
@@ -81,6 +84,14 @@ export const ShirtCustomizer: React.FC<ShirtCustomizerProps> = ({
       savedAt: new Date().toISOString()
     });
   };
+
+  // Debug current state
+  console.log('ShirtCustomizer state:', {
+    frontDesign: frontDesign ? 'has design' : 'no design',
+    backDesign: backDesign ? 'has design' : 'no design',
+    showBack,
+    selectedColor
+  });
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">

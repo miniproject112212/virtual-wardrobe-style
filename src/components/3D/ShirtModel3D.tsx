@@ -1,7 +1,7 @@
 
 import React, { useRef, useEffect, useState } from 'react';
-import { useFrame, useLoader } from '@react-three/fiber';
-import { Group } from 'three';
+import { useFrame } from '@react-three/fiber';
+import { Group, Mesh } from 'three';
 import * as THREE from 'three';
 
 interface DesignPlacement {
@@ -38,22 +38,54 @@ export const ShirtModel3D: React.FC<ShirtModel3DProps> = ({
 
   // Load textures when designs change
   useEffect(() => {
+    console.log('Loading front design:', frontDesign);
     if (frontDesign) {
       const loader = new THREE.TextureLoader();
-      loader.load(frontDesign, (texture) => {
-        setFrontTexture(texture);
-      });
+      loader.load(
+        frontDesign,
+        (texture) => {
+          console.log('Front texture loaded successfully');
+          // Ensure proper texture settings
+          texture.wrapS = THREE.ClampToEdgeWrapping;
+          texture.wrapT = THREE.ClampToEdgeWrapping;
+          texture.minFilter = THREE.LinearFilter;
+          texture.magFilter = THREE.LinearFilter;
+          setFrontTexture(texture);
+        },
+        (progress) => {
+          console.log('Front texture loading progress:', progress);
+        },
+        (error) => {
+          console.error('Error loading front texture:', error);
+        }
+      );
     } else {
       setFrontTexture(null);
     }
   }, [frontDesign]);
 
   useEffect(() => {
+    console.log('Loading back design:', backDesign);
     if (backDesign) {
       const loader = new THREE.TextureLoader();
-      loader.load(backDesign, (texture) => {
-        setBackTexture(texture);
-      });
+      loader.load(
+        backDesign,
+        (texture) => {
+          console.log('Back texture loaded successfully');
+          // Ensure proper texture settings
+          texture.wrapS = THREE.ClampToEdgeWrapping;
+          texture.wrapT = THREE.ClampToEdgeWrapping;
+          texture.minFilter = THREE.LinearFilter;
+          texture.magFilter = THREE.LinearFilter;
+          setBackTexture(texture);
+        },
+        (progress) => {
+          console.log('Back texture loading progress:', progress);
+        },
+        (error) => {
+          console.error('Error loading back texture:', error);
+        }
+      );
     } else {
       setBackTexture(null);
     }
@@ -104,6 +136,8 @@ export const ShirtModel3D: React.FC<ShirtModel3DProps> = ({
     }
   }, [showBack]);
 
+  console.log('Rendering ShirtModel3D - frontTexture:', !!frontTexture, 'backTexture:', !!backTexture, 'showBack:', showBack);
+
   return (
     <group ref={shirtRef} position={[0, 0, 0]}>
       {/* Main T-shirt body */}
@@ -119,15 +153,17 @@ export const ShirtModel3D: React.FC<ShirtModel3DProps> = ({
       {/* Front design */}
       {frontTexture && !showBack && (
         <mesh 
-          position={[frontPlacement.x, frontPlacement.y, 0.06]}
+          position={[frontPlacement.x, frontPlacement.y, 0.07]}
           rotation={[0, 0, frontPlacement.rotation]}
-          scale={[frontPlacement.scale, frontPlacement.scale, 1]}
+          scale={[frontPlacement.scale * 0.6, frontPlacement.scale * 0.6, 1]}
         >
-          <planeGeometry args={[0.8, 0.8]} />
+          <planeGeometry args={[1, 1]} />
           <meshStandardMaterial 
             transparent 
-            opacity={0.9}
+            opacity={0.95}
             map={frontTexture}
+            alphaTest={0.1}
+            side={THREE.DoubleSide}
           />
         </mesh>
       )}
@@ -135,15 +171,17 @@ export const ShirtModel3D: React.FC<ShirtModel3DProps> = ({
       {/* Back design */}
       {backTexture && showBack && (
         <mesh 
-          position={[backPlacement.x, backPlacement.y, 0.06]}
+          position={[backPlacement.x, backPlacement.y, -0.07]}
           rotation={[0, Math.PI, backPlacement.rotation]}
-          scale={[backPlacement.scale, backPlacement.scale, 1]}
+          scale={[backPlacement.scale * 0.6, backPlacement.scale * 0.6, 1]}
         >
-          <planeGeometry args={[0.8, 0.8]} />
+          <planeGeometry args={[1, 1]} />
           <meshStandardMaterial 
             transparent 
-            opacity={0.9}
+            opacity={0.95}
             map={backTexture}
+            alphaTest={0.1}
+            side={THREE.DoubleSide}
           />
         </mesh>
       )}
