@@ -1,8 +1,8 @@
 
 import React, { useRef, useEffect } from 'react';
-import { useFrame } from '@react-three/fiber';
-import { Mesh, TextureLoader, PlaneGeometry, MeshStandardMaterial } from 'three';
-import { useLoader } from '@react-three/fiber';
+import { useFrame, useLoader } from '@react-three/fiber';
+import { Group } from 'three';
+import * as THREE from 'three';
 
 interface DesignPlacement {
   x: number;
@@ -32,9 +32,7 @@ export const ShirtModel3D: React.FC<ShirtModel3DProps> = ({
   rotationSpeed = 0.01,
   autoRotate = false
 }) => {
-  const shirtRef = useRef<Mesh>(null);
-  const frontDesignRef = useRef<Mesh>(null);
-  const backDesignRef = useRef<Mesh>(null);
+  const shirtRef = useRef<Group>(null);
 
   useFrame(() => {
     if (shirtRef.current && autoRotate) {
@@ -73,6 +71,8 @@ export const ShirtModel3D: React.FC<ShirtModel3DProps> = ({
     return new THREE.ExtrudeGeometry(shape, extrudeSettings);
   };
 
+  const shirtGeometry = createTShirtGeometry();
+
   useEffect(() => {
     if (shirtRef.current) {
       shirtRef.current.rotation.y = showBack ? Math.PI : 0;
@@ -83,7 +83,7 @@ export const ShirtModel3D: React.FC<ShirtModel3DProps> = ({
     <group ref={shirtRef} position={[0, 0, 0]}>
       {/* Main T-shirt body */}
       <mesh position={[0, 0, 0]}>
-        <extrudeGeometry args={[createTShirtGeometry(), { depth: 0.1, bevelEnabled: true }]} />
+        <primitive object={shirtGeometry} />
         <meshStandardMaterial 
           color={color} 
           roughness={0.7}
@@ -94,7 +94,6 @@ export const ShirtModel3D: React.FC<ShirtModel3DProps> = ({
       {/* Front design */}
       {frontDesign && !showBack && (
         <mesh 
-          ref={frontDesignRef}
           position={[frontPlacement.x, frontPlacement.y, 0.06]}
           rotation={[0, 0, frontPlacement.rotation]}
           scale={[frontPlacement.scale, frontPlacement.scale, 1]}
@@ -103,7 +102,7 @@ export const ShirtModel3D: React.FC<ShirtModel3DProps> = ({
           <meshStandardMaterial 
             transparent 
             opacity={0.9}
-            map={useLoader(TextureLoader, frontDesign)}
+            map={useLoader(THREE.TextureLoader, frontDesign)}
           />
         </mesh>
       )}
@@ -111,16 +110,15 @@ export const ShirtModel3D: React.FC<ShirtModel3DProps> = ({
       {/* Back design */}
       {backDesign && showBack && (
         <mesh 
-          ref={backDesignRef}
           position={[backPlacement.x, backPlacement.y, 0.06]}
           rotation={[0, Math.PI, backPlacement.rotation]}
-          scale={[frontPlacement.scale, frontPlacement.scale, 1]}
+          scale={[backPlacement.scale, backPlacement.scale, 1]}
         >
           <planeGeometry args={[0.8, 0.8]} />
           <meshStandardMaterial 
             transparent 
             opacity={0.9}
-            map={useLoader(TextureLoader, backDesign)}
+            map={useLoader(THREE.TextureLoader, backDesign)}
           />
         </mesh>
       )}
