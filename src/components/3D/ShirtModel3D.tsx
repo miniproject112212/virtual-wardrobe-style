@@ -1,5 +1,5 @@
 
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { useFrame, useLoader } from '@react-three/fiber';
 import { Group } from 'three';
 import * as THREE from 'three';
@@ -33,6 +33,31 @@ export const ShirtModel3D: React.FC<ShirtModel3DProps> = ({
   autoRotate = false
 }) => {
   const shirtRef = useRef<Group>(null);
+  const [frontTexture, setFrontTexture] = useState<THREE.Texture | null>(null);
+  const [backTexture, setBackTexture] = useState<THREE.Texture | null>(null);
+
+  // Load textures when designs change
+  useEffect(() => {
+    if (frontDesign) {
+      const loader = new THREE.TextureLoader();
+      loader.load(frontDesign, (texture) => {
+        setFrontTexture(texture);
+      });
+    } else {
+      setFrontTexture(null);
+    }
+  }, [frontDesign]);
+
+  useEffect(() => {
+    if (backDesign) {
+      const loader = new THREE.TextureLoader();
+      loader.load(backDesign, (texture) => {
+        setBackTexture(texture);
+      });
+    } else {
+      setBackTexture(null);
+    }
+  }, [backDesign]);
 
   useFrame(() => {
     if (shirtRef.current && autoRotate) {
@@ -92,7 +117,7 @@ export const ShirtModel3D: React.FC<ShirtModel3DProps> = ({
       </mesh>
       
       {/* Front design */}
-      {frontDesign && !showBack && (
+      {frontTexture && !showBack && (
         <mesh 
           position={[frontPlacement.x, frontPlacement.y, 0.06]}
           rotation={[0, 0, frontPlacement.rotation]}
@@ -102,13 +127,13 @@ export const ShirtModel3D: React.FC<ShirtModel3DProps> = ({
           <meshStandardMaterial 
             transparent 
             opacity={0.9}
-            map={useLoader(THREE.TextureLoader, frontDesign)}
+            map={frontTexture}
           />
         </mesh>
       )}
       
       {/* Back design */}
-      {backDesign && showBack && (
+      {backTexture && showBack && (
         <mesh 
           position={[backPlacement.x, backPlacement.y, 0.06]}
           rotation={[0, Math.PI, backPlacement.rotation]}
@@ -118,7 +143,7 @@ export const ShirtModel3D: React.FC<ShirtModel3DProps> = ({
           <meshStandardMaterial 
             transparent 
             opacity={0.9}
-            map={useLoader(THREE.TextureLoader, backDesign)}
+            map={backTexture}
           />
         </mesh>
       )}

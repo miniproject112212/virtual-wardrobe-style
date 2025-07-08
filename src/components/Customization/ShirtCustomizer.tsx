@@ -62,6 +62,7 @@ export const ShirtCustomizer: React.FC<ShirtCustomizerProps> = ({
   }
 
   const handleDesignUpload = (design: string, type: 'front' | 'back') => {
+    console.log('Design uploaded:', type, design);
     if (type === 'front') {
       setFrontDesign(design);
     } else {
@@ -159,7 +160,7 @@ export const ShirtCustomizer: React.FC<ShirtCustomizerProps> = ({
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="text-2xl font-bold text-gray-900">
-                ${selectedShirt.price}
+                ₹{selectedShirt.price}
               </div>
               
               {/* Color Selection */}
